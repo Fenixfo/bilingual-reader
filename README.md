@@ -66,9 +66,12 @@ src/
     tokenize.ts               Divide un texto en tokens de palabra / no-palabra
     extractReadableText.ts    HTML -> párrafos planos (compartido por EPUB y Web)
   App.tsx                     Selector de fuente (tabs) + layout general
+scripts/
+  build-dictionary.mjs         Convierte el dataset StarDict de FreeDict a en-es.json
 public/
   dictionaries/
-    en-es.sample.json         Diccionario de muestra (formato lema -> entrada)
+    en-es.json                Diccionario EN->ES (~42.600 lemas, ver sección abajo)
+    ATTRIBUTION.md             Atribución/licencia (CC BY-SA 3.0) de en-es.json
   pdfjs/
     standard_fonts/           Fuentes estándar de pdfjs-dist (evita warnings/métricas
                               incorrectas en PDFs sin fuentes embebidas)
@@ -76,19 +79,39 @@ public/
 
 ## Diccionario local
 
-Formato (`public/dictionaries/en-es.sample.json`): un objeto donde
-cada clave es el **lema** en inglés y el valor tiene sus acepciones
-(`pos`, `translation`, `alternateTranslations`, `gloss`). Ver
-`src/dictionary/types.ts`.
+Formato (`public/dictionaries/en-es.json`): un objeto donde cada clave
+es el **lema** en inglés y el valor tiene sus acepciones (`pos`,
+`translation`, `alternateTranslations`). Ver `src/dictionary/types.ts`.
 
 La búsqueda (`src/dictionary/lookup.ts`) limpia la palabra clickeada
 (minúsculas, sin puntuación) y, si no hay match exacto, prueba
 variantes heurísticas simples (plural, gerundio, pasado regular,
 comparativo/superlativo) antes de darse por vencida.
 
-Es un dataset de muestra para la PoC — reemplazar/ampliar
-`en-es.sample.json` (o añadir más archivos y cargarlos según el idioma)
-es el siguiente paso para tener cobertura real.
+**Contenido**: ~42.600 lemas de una sola palabra, generados a partir
+del dataset `eng-spa` de [FreeDict](https://freedict.org/) (formato
+StarDict, ver `scripts/build-dictionary.mjs`). Licencia CC BY-SA 3.0 —
+ver `public/dictionaries/ATTRIBUTION.md`. Decisiones de la conversión:
+
+- Solo se conservan lemas de una palabra (sin espacios): el `lookup.ts`
+  actual busca palabra por palabra, así que una entrada multi-palabra
+  (idiom, `"kick the bucket"`) nunca sería alcanzable. FreeDict tiene
+  64.258 entradas totales; ~16.500 son multi-palabra y se descartan.
+- FreeDict organiza cada entrada en acepciones numeradas, cada una con
+  su propia lista de traducciones. El script aplana todas las
+  traducciones de un (palabra, parte del habla) en una sola `sense`
+  (traducción principal + hasta 5 alternativas), en el orden que trae
+  la fuente (primera acepción de Wiktionary primero). Se probó
+  reordenar por longitud como heurística de "más común", pero eso
+  hacía ganar términos de jerga/abreviados cortos (p. ej. "tío" antes
+  que "gato" para *cat*) — un problema peor que el original, así que
+  se revirtió. Sin datos reales de frecuencia de uso, algunas entradas
+  van a mostrar como traducción principal una acepción poco común
+  (p. ej. *cat* → "felino" antes que "gato").
+- Para regenerar con una versión más nueva de FreeDict: descargar y
+  extraer el `.tar.xz` de https://freedict.org/downloads/ (eng-spa) y
+  correr `node scripts/build-dictionary.mjs <carpeta-extraída>
+  public/dictionaries/en-es.json`.
 
 ## Desarrollo
 
@@ -127,4 +150,5 @@ GitHub Pages con origen "GitHub Actions" en la configuración del repo).
       traducción de cada una en el mismo tooltip, anclado al rect de la
       selección (vía `VirtualElement` de floating-ui). Solo mouse por ahora
       (selección táctil por long-press queda pendiente)
-- [ ] Diccionario completo (más allá del sample)
+- [x] Diccionario completo: ~42.600 lemas desde el dataset FreeDict eng-spa
+      (CC BY-SA 3.0), cargado una sola vez por sesión (compartido entre tabs)
