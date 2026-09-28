@@ -9,7 +9,10 @@ al español. 100% cliente, sin backend ni APIs de pago (privacy-first).
 
 - React + Vite + TypeScript
 - Tailwind CSS v4
-- `epubjs` — renderizado de EPUB
+- `epubjs` — parseo/navegación de EPUB (spine, TOC); el texto de cada
+  capítulo se extrae y se renderiza con `TranslatableText` (no se usa
+  el `Rendition` con iframes de epubjs, para reutilizar un único
+  pipeline de click-to-translate en todas las fuentes)
 - `pdfjs-dist` — capa de texto de PDF
 - `@mozilla/readability` — extracción de contenido principal desde URLs
 - `@floating-ui/react` — posicionamiento del tooltip
@@ -29,13 +32,19 @@ src/
     useDictionary.ts          Hook: carga el diccionario (fetch + cache) y expone lookup()
   features/
     sources/
-      text/                   Fuente: texto plano / editor libre
-      epub/                   Fuente: EPUB (epubjs) — pendiente
+      text/
+        TextSourceInput.tsx   Formulario: pegar/escribir texto en inglés
+        TextReader.tsx         Orquesta input <-> lectura para la fuente de texto
+      epub/
+        epub.ts                 Abre el .epub (epubjs), arma lista de capítulos (spine + TOC),
+                                 extrae el texto de cada capítulo como párrafos planos
+        useEpubReader.ts         Hook: estado del libro/capítulo actual, navegación
+        EpubReader.tsx           UI: file picker + selector de capítulo + TranslatableText
       pdf/                    Fuente: PDF (pdfjs-dist) — pendiente
       web/                    Fuente: URL + readability — pendiente
   lib/
     tokenize.ts               Divide un texto en tokens de palabra / no-palabra
-  App.tsx                     PoC: párrafo de ejemplo con traducción al clic
+  App.tsx                     Selector de fuente (tabs) + layout general
 public/
   dictionaries/
     en-es.sample.json         Diccionario de muestra (formato lema -> entrada)
@@ -86,7 +95,8 @@ GitHub Pages con origen "GitHub Actions" en la configuración del repo).
 - [x] Estructura de carpetas
 - [x] Diccionario local (formato + búsqueda con lematización básica)
 - [x] PoC: texto clickeable con tooltip de traducción
-- [ ] Fuente EPUB (epubjs)
+- [x] Fuente de texto plano / editor libre
+- [x] Fuente EPUB (epubjs): carga de archivo, capítulos vía TOC, texto extraído por capítulo
 - [ ] Fuente PDF (pdfjs-dist)
 - [ ] Fuente URL (readability + proxy CORS)
 - [ ] Selección de frase (no solo palabra individual)
