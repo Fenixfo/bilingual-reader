@@ -1,0 +1,202 @@
+{
+  "run": {
+    "lemma": "run",
+    "senses": [
+      {
+        "pos": "verb",
+        "translation": "correr",
+        "alternateTranslations": ["huir", "funcionar", "dirigir"],
+        "gloss": "moverse rápidamente usando las piernas"
+      },
+      {
+        "pos": "noun",
+        "translation": "carrera",
+        "gloss": "acto de correr, o una serie/racha de algo"
+      }
+    ]
+  },
+  "book": {
+    "lemma": "book",
+    "senses": [
+      {
+        "pos": "noun",
+        "translation": "libro"
+      },
+      {
+        "pos": "verb",
+        "translation": "reservar",
+        "gloss": "reservar un lugar, mesa, vuelo, etc."
+      }
+    ]
+  },
+  "read": {
+    "lemma": "read",
+    "senses": [
+      {
+        "pos": "verb",
+        "translation": "leer"
+      }
+    ]
+  },
+  "light": {
+    "lemma": "light",
+    "senses": [
+      {
+        "pos": "noun",
+        "translation": "luz"
+      },
+      {
+        "pos": "adjective",
+        "translation": "ligero",
+        "alternateTranslations": ["liviano", "claro"]
+      },
+      {
+        "pos": "verb",
+        "translation": "encender",
+        "alternateTranslations": ["iluminar"]
+      }
+    ]
+  },
+  "world": {
+    "lemma": "world",
+    "senses": [
+      {
+        "pos": "noun",
+        "translation": "mundo"
+      }
+    ]
+  },
+  "like": {
+    "lemma": "like",
+    "senses": [
+      {
+        "pos": "verb",
+        "translation": "gustar",
+        "gloss": "sentir agrado por algo"
+      },
+      {
+        "pos": "preposition",
+        "translation": "como",
+        "gloss": "de manera similar a"
+      }
+    ]
+  },
+  "try": {
+    "lemma": "try",
+    "senses": [
+      {
+        "pos": "verb",
+        "translation": "intentar",
+        "alternateTranslations": ["probar"]
+      }
+    ]
+  },
+  "big": {
+    "lemma": "big",
+    "senses": [
+      {
+        "pos": "adjective",
+        "translation": "grande"
+      }
+    ]
+  },
+  "nice": {
+    "lemma": "nice",
+    "senses": [
+      {
+        "pos": "adjective",
+        "translation": "agradable",
+        "alternateTranslations": ["simpático", "amable"]
+      }
+    ]
+  },
+  "cry": {
+    "lemma": "cry",
+    "senses": [
+      {
+        "pos": "verb",
+        "translation": "llorar"
+      },
+      {
+        "pos": "noun",
+        "translation": "grito"
+      }
+    ]
+  },
+  "fox": {
+    "lemma": "fox",
+    "senses": [
+      {
+        "pos": "noun",
+        "translation": "zorro"
+      }
+    ]
+  },
+  "jump": {
+    "lemma": "jump",
+    "senses": [
+      {
+        "pos": "verb",
+        "translation": "saltar"
+      }
+    ]
+  },
+  "lazy": {
+    "lemma": "lazy",
+    "senses": [
+      {
+        "pos": "adjective",
+        "translation": "perezoso",
+        "alternateTranslations": ["flojo"]
+      }
+    ]
+  },
+  "dog": {
+    "lemma": "dog",
+    "senses": [
+      {
+        "pos": "noun",
+        "translation": "perro"
+      }
+    ]
+  },
+  "quick": {
+    "lemma": "quick",
+    "senses": [
+      {
+        "pos": "adjective",
+        "translation": "rápido",
+        "alternateTranslations": ["veloz"]
+      }
+    ]
+  },
+  "brown": {
+    "lemma": "brown",
+    "senses": [
+      {
+        "pos": "adjective",
+        "translation": "marrón",
+        "alternateTranslations": ["café"]
+      }
+    ]
+  },
+  "over": {
+    "lemma": "over",
+    "senses": [
+      {
+        "pos": "preposition",
+        "translation": "sobre",
+        "alternateTranslations": ["por encima de"]
+      }
+    ]
+  },
+  "the": {
+    "lemma": "the",
+    "senses": [
+      {
+        "pos": "determiner",
+        "translation": "el / la / los / las"
+      }
+    ]
+  }
+}
