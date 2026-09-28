@@ -16,12 +16,17 @@ al español. 100% cliente, sin backend ni APIs de pago (privacy-first).
 - `pdfjs-dist` — capa de texto de PDF; se extrae el texto de cada
   página (agrupando líneas en párrafos por heurística de espaciado
   vertical) y se renderiza con `TranslatableText`, mismo enfoque que EPUB
-- `@mozilla/readability` — extracción de contenido principal desde URLs.
-  El proxy CORS de la spec original (`corsproxy.io`) ahora exige API key
-  de pago (401 sin ella, verificado); se usa `api.allorigins.win/raw`
-  en su lugar, gratuito y sin registro. Es un servicio público de
-  terceros: puede tener fallos transitorios o rate-limiting (visto en
-  pruebas — un reintento resolvió el fallo)
+- `@mozilla/readability` — extracción de contenido principal desde URLs,
+  como **fallback**. El proxy CORS de la spec original (`corsproxy.io`)
+  ahora exige API key de pago (401 sin ella, verificado); el fallback
+  usa `api.allorigins.win/raw` en su lugar. El método **primario** es
+  [Jina AI Reader](https://r.jina.ai/) (`https://r.jina.ai/<url>`),
+  gratis sin key, que devuelve el contenido ya limpio en Markdown — en
+  las pruebas fue mucho más rápido y confiable que los proxies CORS
+  genéricos (que llegaron a fallar por completo, incluso con páginas
+  chicas). Como ambos son servicios de terceros sin SLA, `loadArticleFromUrl`
+  prueba Jina primero y si falla (o tarda más de 15s) cae al proxy +
+  Readability antes de reportar error al usuario
 - `@floating-ui/react` — posicionamiento del tooltip
 
 ## Arquitectura
