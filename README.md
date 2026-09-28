@@ -35,8 +35,10 @@ al español. 100% cliente, sin backend ni APIs de pago (privacy-first).
 src/
   components/
     reader/
-      TranslatableText.tsx   Envuelve cada palabra de un texto en un botón clickeable
-      WordTooltip.tsx         Tooltip flotante (floating-ui) con la traducción
+      TranslatableText.tsx   Envuelve cada palabra en un botón clickeable; también detecta
+                             selección de frase (mouseup con selección multi-palabra)
+      WordTooltip.tsx         Tooltip flotante (floating-ui) con la traducción de una
+                             palabra o de cada palabra de una frase seleccionada
   dictionary/
     types.ts                 Tipos del diccionario (DictionaryEntry, senses, etc.)
     lookup.ts                 Limpieza de palabra + lematización heurística + búsqueda
@@ -120,6 +122,9 @@ GitHub Pages con origen "GitHub Actions" en la configuración del repo).
 - [x] Fuente de texto plano / editor libre
 - [x] Fuente EPUB (epubjs): carga de archivo, capítulos vía TOC, texto extraído por capítulo
 - [x] Fuente PDF (pdfjs-dist): carga de archivo, texto extraído por página
-- [x] Fuente URL (readability + proxy CORS sin key)
-- [ ] Selección de frase (no solo palabra individual)
+- [x] Fuente URL (Jina Reader primario, readability + proxy CORS como fallback)
+- [x] Selección de frase: arrastrar el mouse sobre varias palabras muestra la
+      traducción de cada una en el mismo tooltip, anclado al rect de la
+      selección (vía `VirtualElement` de floating-ui). Solo mouse por ahora
+      (selección táctil por long-press queda pendiente)
 - [ ] Diccionario completo (más allá del sample)
