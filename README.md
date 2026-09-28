@@ -16,7 +16,12 @@ al español. 100% cliente, sin backend ni APIs de pago (privacy-first).
 - `pdfjs-dist` — capa de texto de PDF; se extrae el texto de cada
   página (agrupando líneas en párrafos por heurística de espaciado
   vertical) y se renderiza con `TranslatableText`, mismo enfoque que EPUB
-- `@mozilla/readability` — extracción de contenido principal desde URLs
+- `@mozilla/readability` — extracción de contenido principal desde URLs.
+  El proxy CORS de la spec original (`corsproxy.io`) ahora exige API key
+  de pago (401 sin ella, verificado); se usa `api.allorigins.win/raw`
+  en su lugar, gratuito y sin registro. Es un servicio público de
+  terceros: puede tener fallos transitorios o rate-limiting (visto en
+  pruebas — un reintento resolvió el fallo)
 - `@floating-ui/react` — posicionamiento del tooltip
 
 ## Arquitectura
@@ -47,9 +52,12 @@ src/
                                  (líneas -> párrafos por heurística de espaciado)
         usePdfReader.ts          Hook: estado del documento/página actual, navegación
         PdfReader.tsx            UI: file picker + selector de página + TranslatableText
-      web/                    Fuente: URL + readability — pendiente
+      web/
+        web.ts                   Fetch vía proxy CORS -> Readability -> extractReadableText
+        WebReader.tsx            UI: input de URL + TranslatableText
   lib/
     tokenize.ts               Divide un texto en tokens de palabra / no-palabra
+    extractReadableText.ts    HTML -> párrafos planos (compartido por EPUB y Web)
   App.tsx                     Selector de fuente (tabs) + layout general
 public/
   dictionaries/
@@ -107,6 +115,6 @@ GitHub Pages con origen "GitHub Actions" en la configuración del repo).
 - [x] Fuente de texto plano / editor libre
 - [x] Fuente EPUB (epubjs): carga de archivo, capítulos vía TOC, texto extraído por capítulo
 - [x] Fuente PDF (pdfjs-dist): carga de archivo, texto extraído por página
-- [ ] Fuente URL (readability + proxy CORS)
+- [x] Fuente URL (readability + proxy CORS sin key)
 - [ ] Selección de frase (no solo palabra individual)
 - [ ] Diccionario completo (más allá del sample)

@@ -13,12 +13,19 @@ const PdfReader = lazy(() =>
   })),
 );
 
-type Source = "text" | "epub" | "pdf";
+const WebReader = lazy(() =>
+  import("./features/sources/web/WebReader").then((m) => ({
+    default: m.WebReader,
+  })),
+);
+
+type Source = "text" | "epub" | "pdf" | "web";
 
 const SOURCES: { id: Source; label: string }[] = [
   { id: "text", label: "Texto" },
   { id: "epub", label: "EPUB" },
   { id: "pdf", label: "PDF" },
+  { id: "web", label: "URL" },
 ];
 
 function LazyFallback({ label }: { label: string }) {
@@ -66,6 +73,11 @@ function App() {
           {source === "pdf" && (
             <Suspense fallback={<LazyFallback label="PDF" />}>
               <PdfReader />
+            </Suspense>
+          )}
+          {source === "web" && (
+            <Suspense fallback={<LazyFallback label="URL" />}>
+              <WebReader />
             </Suspense>
           )}
         </div>

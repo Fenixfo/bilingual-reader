@@ -1,4 +1,5 @@
 import Epub, { type Book, type NavItem } from "epubjs";
+import { extractReadableText } from "../../../lib/extractReadableText";
 
 export interface EpubChapter {
   href: string;
@@ -66,18 +67,6 @@ export async function loadEpub(file: File): Promise<LoadedEpub> {
   const title = metadata.title?.trim() || file.name.replace(/\.epub$/i, "");
 
   return { book, title, chapters };
-}
-
-function extractReadableText(doc: Document | undefined): string {
-  if (!doc?.body) return "";
-
-  const blockSelector = "p, h1, h2, h3, h4, h5, h6, li, blockquote, td, th";
-  const blocks = Array.from(doc.body.querySelectorAll(blockSelector));
-  const paragraphs = (blocks.length > 0 ? blocks : [doc.body])
-    .map((el) => el.textContent?.replace(/\s+/g, " ").trim() ?? "")
-    .filter(Boolean);
-
-  return paragraphs.join("\n\n");
 }
 
 /** Carga un capítulo (sección del spine) y devuelve su texto como párrafos planos. */
