@@ -7,12 +7,23 @@ const EpubReader = lazy(() =>
   })),
 );
 
-type Source = "text" | "epub";
+const PdfReader = lazy(() =>
+  import("./features/sources/pdf/PdfReader").then((m) => ({
+    default: m.PdfReader,
+  })),
+);
+
+type Source = "text" | "epub" | "pdf";
 
 const SOURCES: { id: Source; label: string }[] = [
   { id: "text", label: "Texto" },
   { id: "epub", label: "EPUB" },
+  { id: "pdf", label: "PDF" },
 ];
+
+function LazyFallback({ label }: { label: string }) {
+  return <p className="text-sm text-neutral-400">Cargando lector de {label}...</p>;
+}
 
 function App() {
   const [source, setSource] = useState<Source>("text");
@@ -46,15 +57,15 @@ function App() {
         </div>
 
         <div className="mt-6">
-          {source === "text" ? (
-            <TextReader />
-          ) : (
-            <Suspense
-              fallback={
-                <p className="text-sm text-neutral-400">Cargando lector de EPUB...</p>
-              }
-            >
+          {source === "text" && <TextReader />}
+          {source === "epub" && (
+            <Suspense fallback={<LazyFallback label="EPUB" />}>
               <EpubReader />
+            </Suspense>
+          )}
+          {source === "pdf" && (
+            <Suspense fallback={<LazyFallback label="PDF" />}>
+              <PdfReader />
             </Suspense>
           )}
         </div>

@@ -13,7 +13,9 @@ al español. 100% cliente, sin backend ni APIs de pago (privacy-first).
   capítulo se extrae y se renderiza con `TranslatableText` (no se usa
   el `Rendition` con iframes de epubjs, para reutilizar un único
   pipeline de click-to-translate en todas las fuentes)
-- `pdfjs-dist` — capa de texto de PDF
+- `pdfjs-dist` — capa de texto de PDF; se extrae el texto de cada
+  página (agrupando líneas en párrafos por heurística de espaciado
+  vertical) y se renderiza con `TranslatableText`, mismo enfoque que EPUB
 - `@mozilla/readability` — extracción de contenido principal desde URLs
 - `@floating-ui/react` — posicionamiento del tooltip
 
@@ -40,7 +42,11 @@ src/
                                  extrae el texto de cada capítulo como párrafos planos
         useEpubReader.ts         Hook: estado del libro/capítulo actual, navegación
         EpubReader.tsx           UI: file picker + selector de capítulo + TranslatableText
-      pdf/                    Fuente: PDF (pdfjs-dist) — pendiente
+      pdf/
+        pdf.ts                   Abre el .pdf (pdfjs-dist), extrae texto por página
+                                 (líneas -> párrafos por heurística de espaciado)
+        usePdfReader.ts          Hook: estado del documento/página actual, navegación
+        PdfReader.tsx            UI: file picker + selector de página + TranslatableText
       web/                    Fuente: URL + readability — pendiente
   lib/
     tokenize.ts               Divide un texto en tokens de palabra / no-palabra
@@ -48,6 +54,9 @@ src/
 public/
   dictionaries/
     en-es.sample.json         Diccionario de muestra (formato lema -> entrada)
+  pdfjs/
+    standard_fonts/           Fuentes estándar de pdfjs-dist (evita warnings/métricas
+                              incorrectas en PDFs sin fuentes embebidas)
 ```
 
 ## Diccionario local
@@ -97,7 +106,7 @@ GitHub Pages con origen "GitHub Actions" en la configuración del repo).
 - [x] PoC: texto clickeable con tooltip de traducción
 - [x] Fuente de texto plano / editor libre
 - [x] Fuente EPUB (epubjs): carga de archivo, capítulos vía TOC, texto extraído por capítulo
-- [ ] Fuente PDF (pdfjs-dist)
+- [x] Fuente PDF (pdfjs-dist): carga de archivo, texto extraído por página
 - [ ] Fuente URL (readability + proxy CORS)
 - [ ] Selección de frase (no solo palabra individual)
 - [ ] Diccionario completo (más allá del sample)
