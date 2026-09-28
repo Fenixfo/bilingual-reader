@@ -65,7 +65,9 @@ src/
   lib/
     tokenize.ts               Divide un texto en tokens de palabra / no-palabra
     extractReadableText.ts    HTML -> párrafos planos (compartido por EPUB y Web)
-  App.tsx                     Selector de fuente (tabs) + layout general
+    idb.ts                     Helper genérico de IndexedDB (get/set/delete por store+clave)
+    readerState.ts             Persistencia de lo cargado por fuente (ver sección abajo)
+  App.tsx                     Selector de fuente (tabs) + layout general; recuerda la última activa
 scripts/
   build-dictionary.mjs         Convierte el dataset StarDict de FreeDict a en-es.json
 public/
@@ -113,6 +115,32 @@ ver `public/dictionaries/ATTRIBUTION.md`. Decisiones de la conversión:
   correr `node scripts/build-dictionary.mjs <carpeta-extraída>
   public/dictionaries/en-es.json`.
 
+## Persistencia de lo cargado
+
+Cada fuente guarda lo que cargaste en IndexedDB (`src/lib/readerState.ts`,
+misma base que el cache del diccionario) y lo restaura automáticamente
+al volver, sea porque cambiaste de tab o porque cerraste y volviste a
+abrir la app:
+
+- **Texto**: el texto y si estabas en modo edición o lectura.
+- **EPUB / PDF**: el archivo completo (como `Blob`) y el
+  capítulo/página donde estabas. Al restaurar, se vuelve a abrir el
+  archivo con `epubjs`/`pdfjs-dist` y se salta directo a esa posición.
+  La posición se guarda aparte del archivo (clave liviana) para no
+  reescribir el blob completo en cada cambio de capítulo/página.
+- **URL**: la URL, el título y el texto ya extraído (no se vuelve a
+  pedir el artículo al restaurar).
+- **Tab activa**: `App.tsx` recuerda cuál era la fuente seleccionada.
+
+Cada fuente tiene un botón para "empezar de nuevo" (Editar texto /
+Cambiar de libro / Cambiar de PDF / Cambiar URL) que además borra su
+estado persistido, para no quedar con contenido viejo dando vueltas.
+
+Como los archivos de EPUB/PDF pueden pesar varios MB, quedan
+guardados en el dispositivo del usuario (IndexedDB), nunca se suben a
+ningún servidor — consistente con el enfoque privacy-first del resto
+de la app.
+
 ## Desarrollo
 
 ```bash
@@ -152,3 +180,5 @@ GitHub Pages con origen "GitHub Actions" en la configuración del repo).
       (selección táctil por long-press queda pendiente)
 - [x] Diccionario completo: ~42.600 lemas desde el dataset FreeDict eng-spa
       (CC BY-SA 3.0), cargado una sola vez por sesión (compartido entre tabs)
+- [x] Persistencia por fuente en IndexedDB: lo cargado en Texto/EPUB/PDF/URL
+      se restaura al cambiar de tab o al cerrar y volver a abrir la app

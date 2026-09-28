@@ -8,6 +8,7 @@ export function PdfReader() {
     numPages,
     pageIndex,
     pageText,
+    isRestoring,
     isLoadingDoc,
     isLoadingPage,
     error,
@@ -24,6 +25,8 @@ export function PdfReader() {
     if (file) loadFile(file);
     event.target.value = "";
   }
+
+  if (isRestoring) return null;
 
   if (!hasDoc) {
     return (

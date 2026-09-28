@@ -1,12 +1,29 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { TranslatableText } from "../../../components/reader/TranslatableText";
+import { clearWebState, loadWebState, saveWebState } from "../../../lib/readerState";
 import { loadArticleFromUrl, type LoadedArticle } from "./web";
 
 export function WebReader() {
   const [urlInput, setUrlInput] = useState("");
+  const [isRestoring, setIsRestoring] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [article, setArticle] = useState<LoadedArticle | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    loadWebState().then((saved) => {
+      if (cancelled) return;
+      if (saved) {
+        setUrlInput(saved.url);
+        setArticle({ title: saved.title, text: saved.text });
+      }
+      setIsRestoring(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -17,6 +34,7 @@ export function WebReader() {
     try {
       const result = await loadArticleFromUrl(urlInput);
       setArticle(result);
+      void saveWebState({ url: urlInput.trim(), title: result.title, text: result.text });
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "No se pudo cargar el artículo",
@@ -25,6 +43,8 @@ export function WebReader() {
       setIsLoading(false);
     }
   }
+
+  if (isRestoring) return null;
 
   if (!article) {
     return (
@@ -73,7 +93,10 @@ export function WebReader() {
     <div>
       <button
         type="button"
-        onClick={() => setArticle(null)}
+        onClick={() => {
+          setArticle(null);
+          void clearWebState();
+        }}
         className="mb-3 text-sm text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"
       >
         ← Cambiar URL

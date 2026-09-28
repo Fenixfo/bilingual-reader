@@ -1,5 +1,6 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { TextReader } from "./features/sources/text/TextReader";
+import { loadActiveSource, saveActiveSource } from "./lib/readerState";
 
 const EpubReader = lazy(() =>
   import("./features/sources/epub/EpubReader").then((m) => ({
@@ -35,6 +36,17 @@ function LazyFallback({ label }: { label: string }) {
 function App() {
   const [source, setSource] = useState<Source>("text");
 
+  useEffect(() => {
+    loadActiveSource().then((saved) => {
+      if (saved) setSource(saved);
+    });
+  }, []);
+
+  function selectSource(next: Source) {
+    setSource(next);
+    void saveActiveSource(next);
+  }
+
   return (
     <div className="min-h-screen bg-neutral-50 px-4 py-10 dark:bg-neutral-950">
       <div className="mx-auto max-w-2xl">
@@ -51,7 +63,7 @@ function App() {
             <button
               key={item.id}
               type="button"
-              onClick={() => setSource(item.id)}
+              onClick={() => selectSource(item.id)}
               className={`-mb-px rounded-t-lg border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
                 source === item.id
                   ? "border-amber-500 text-neutral-900 dark:text-neutral-50"

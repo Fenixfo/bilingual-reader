@@ -1,12 +1,19 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getChapterText, loadEpub, type EpubChapter, type LoadedEpub } from "./epub";
 import type { Book } from "epubjs";
+import {
+  clearFileState,
+  loadFileState,
+  saveFilePosition,
+  saveFileState,
+} from "../../../lib/readerState";
 
 export interface UseEpubReaderResult {
   title: string | null;
   chapters: EpubChapter[];
   chapterIndex: number;
   chapterText: string;
+  isRestoring: boolean;
   isLoadingBook: boolean;
   isLoadingChapter: boolean;
   error: string | null;
@@ -23,6 +30,7 @@ export function useEpubReader(): UseEpubReaderResult {
   const [chapters, setChapters] = useState<EpubChapter[]>([]);
   const [chapterIndex, setChapterIndex] = useState(0);
   const [chapterText, setChapterText] = useState("");
+  const [isRestoring, setIsRestoring] = useState(true);
   const [isLoadingBook, setIsLoadingBook] = useState(false);
   const [isLoadingChapter, setIsLoadingChapter] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,8 +63,8 @@ export function useEpubReader(): UseEpubReaderResult {
     [],
   );
 
-  const loadFile = useCallback(
-    (file: File) => {
+  const openBook = useCallback(
+    (file: File, startChapter: number) => {
       setIsLoadingBook(true);
       setError(null);
 
@@ -66,14 +74,15 @@ export function useEpubReader(): UseEpubReaderResult {
           bookRef.current = loaded.book;
           setTitle(loaded.title);
           setChapters(loaded.chapters);
-          setChapterIndex(0);
           setIsLoadingBook(false);
 
           if (loaded.chapters.length === 0) {
             setError("El EPUB no tiene capítulos legibles.");
             return;
           }
-          void loadChapterAt(loaded.book, loaded.chapters, 0);
+          const index = Math.min(Math.max(startChapter, 0), loaded.chapters.length - 1);
+          setChapterIndex(index);
+          void loadChapterAt(loaded.book, loaded.chapters, index);
         })
         .catch((err: unknown) => {
           setIsLoadingBook(false);
@@ -85,11 +94,35 @@ export function useEpubReader(): UseEpubReaderResult {
     [loadChapterAt],
   );
 
+  useEffect(() => {
+    let cancelled = false;
+    loadFileState("epub").then((saved) => {
+      if (cancelled) return;
+      setIsRestoring(false);
+      if (!saved) return;
+      const file = new File([saved.file], saved.fileName);
+      openBook(file, saved.position);
+    });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo debe correr al montar
+  }, []);
+
+  const loadFile = useCallback(
+    (file: File) => {
+      void saveFileState("epub", { file, fileName: file.name, position: 0 });
+      openBook(file, 0);
+    },
+    [openBook],
+  );
+
   const goToChapter = useCallback(
     (index: number) => {
       if (!bookRef.current || index < 0 || index >= chapters.length) return;
       setChapterIndex(index);
       void loadChapterAt(bookRef.current, chapters, index);
+      void saveFilePosition("epub", index);
     },
     [chapters, loadChapterAt],
   );
@@ -111,6 +144,7 @@ export function useEpubReader(): UseEpubReaderResult {
     setChapterIndex(0);
     setChapterText("");
     setError(null);
+    void clearFileState("epub");
   }, []);
 
   return {
@@ -118,6 +152,7 @@ export function useEpubReader(): UseEpubReaderResult {
     chapters,
     chapterIndex,
     chapterText,
+    isRestoring,
     isLoadingBook,
     isLoadingChapter,
     error,

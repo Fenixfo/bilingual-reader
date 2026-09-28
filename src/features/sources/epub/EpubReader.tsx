@@ -8,6 +8,7 @@ export function EpubReader() {
     chapters,
     chapterIndex,
     chapterText,
+    isRestoring,
     isLoadingBook,
     isLoadingChapter,
     error,
@@ -26,6 +27,8 @@ export function EpubReader() {
     if (file) loadFile(file);
     event.target.value = "";
   }
+
+  if (isRestoring) return null;
 
   if (!hasBook) {
     return (
