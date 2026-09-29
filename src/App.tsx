@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { TextReader } from "./features/sources/text/TextReader";
+import { Capacitor } from "@capacitor/core";
 import { useTheme } from "./lib/useTheme";
 import { loadActiveSource, saveActiveSource } from "./lib/readerState";
 
@@ -21,7 +22,10 @@ const WebReader = lazy(() =>
   })),
 );
 
-type Source = "text" | "epub" | "pdf" | "web";
+const APK_URL =
+  "https://github.com/Fenixfo/bilingual-reader/raw/main/releases/lector-inmersivo-debug.apk";
+
+type Source ="text" | "epub" | "pdf" | "web";
 
 const SOURCES: { id: Source; label: string }[] = [
   { id: "text", label: "Texto" },
@@ -108,6 +112,21 @@ function App() {
             </Suspense>
           )}
         </div>
+
+        {!Capacitor.isNativePlatform() && (
+          <footer className="mt-12 border-t border-neutral-200 pt-6 text-center dark:border-neutral-800">
+            <a
+              href={APK_URL}
+              className="inline-block rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-neutral-900 transition-colors hover:bg-amber-400"
+            >
+              📱 Descargar app para Android (APK)
+            </a>
+            <p className="mt-2 text-xs text-neutral-500">
+              Al instalarla, Android pedirá permitir apps de orígenes
+              desconocidos.
+            </p>
+          </footer>
+        )}
       </div>
     </div>
   );
