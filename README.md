@@ -194,4 +194,5 @@ npm run apk            # genera android/app/build/outputs/apk/debug/app-debug.ap
 npx cap open android   # alternativa: abrir en Android Studio
 ```
 
+Requiere JDK 17–21 (no Java 25) con `JAVA_HOME` apuntando a él y el Android SDK.
 `MOBILE=1` hace que Vite use `base: './'` (en la web se usa `/bilingual-reader/`).

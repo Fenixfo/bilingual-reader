@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "build:mobile": "cross-env MOBILE=1 npm run build && cap sync android",
-    "apk": "npm run build:mobile && cd android && gradlew assembleDebug"
+    "apk": "npm run build:mobile && cd android && .\\gradlew.bat assembleDebug"
   },
   "dependencies": {
     "@capacitor/core": "^8.5.2",
