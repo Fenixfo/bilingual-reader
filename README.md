@@ -182,3 +182,16 @@ GitHub Pages con origen "GitHub Actions" en la configuración del repo).
       (CC BY-SA 3.0), cargado una sola vez por sesión (compartido entre tabs)
 - [x] Persistencia por fuente en IndexedDB: lo cargado en Texto/EPUB/PDF/URL
       se restaura al cambiar de tab o al cerrar y volver a abrir la app
+
+## App Android (APK)
+
+Empaquetada con [Capacitor](https://capacitorjs.com). Requiere Android Studio
+(SDK + JDK).
+
+```
+npm run build:mobile   # build con base './' + cap sync
+npm run apk            # genera android/app/build/outputs/apk/debug/app-debug.apk
+npx cap open android   # alternativa: abrir en Android Studio
+```
+
+`MOBILE=1` hace que Vite use `base: './'` (en la web se usa `/bilingual-reader/`).

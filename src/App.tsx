@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { TextReader } from "./features/sources/text/TextReader";
+import { useTheme } from "./lib/useTheme";
 import { loadActiveSource, saveActiveSource } from "./lib/readerState";
 
 const EpubReader = lazy(() =>
@@ -35,6 +36,7 @@ function LazyFallback({ label }: { label: string }) {
 
 function App() {
   const [source, setSource] = useState<Source>("text");
+  const { theme, toggle } = useTheme();
 
   useEffect(() => {
     loadActiveSource().then((saved) => {
@@ -50,9 +52,22 @@ function App() {
   return (
     <div className="min-h-screen bg-neutral-50 px-4 py-10 dark:bg-neutral-950">
       <div className="mx-auto max-w-2xl">
-        <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
-          Lector Inmersivo
-        </h1>
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
+            Lector Inmersivo
+          </h1>
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label={
+              theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro"
+            }
+            title={theme === "dark" ? "Modo claro" : "Modo oscuro"}
+            className="rounded-lg border border-neutral-200 px-3 py-1.5 text-sm text-neutral-700 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
+          >
+            {theme === "dark" ? "☀️ Claro" : "🌙 Oscuro"}
+          </button>
+        </div>
         <p className="mt-1 text-sm text-neutral-500">
           Cargá un texto en inglés y hacé clic en cualquier palabra para ver
           su traducción.

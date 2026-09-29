@@ -4,6 +4,6 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/bilingual-reader/',
+  base: process.env.MOBILE ? './' : '/bilingual-reader/',
   plugins: [react(), tailwindcss()],
 })
